@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conflict Tracker - Seguiment de Conflictes Bèl·lics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .conflict-item {
+            border-left: 4px solid #e74c3c;
+            padding: 10px;
+            margin: 10px 0;
+            background: #f8f9fa;
+        }
+        .conflict-item.active {
+            border-left-color: #e74c3c;
+        }
+        .conflict-item.frozen {
+            border-left-color: #f39c12;
+        }
+        .conflict-item.ended {
+            border-left-color: #27ae60;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-active {
+            background: #e74c3c;
+            color: white;
+        }
+        .status-frozen {
+            background: #f39c12;
+            color: white;
+        }
+        .status-ended {
+            background: #27ae60;
+            color: white;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        pre {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+<h1>🌍 Conflict Tracker</h1>
+<p style="text-align: center; color: #666;">Sistema de seguiment de conflictes bèl·lics mundials</p>
+
+<div class="container">
+    <div class="card">
+        <h2>📊 Llista de Conflictes</h2>
+        <div id="conflictsList"></div>
+        <div style="margin-top: 15px;">
+            <button onclick="loadConflicts()">🔄 Actualitzar</button>
+            <button onclick="loadActiveConflicts()">🔥 Actius</button>
+            <button onclick="loadAllConflicts()">📋 Tots</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🇺🇳 Llista de Països</h2>
+        <div id="countriesList"></div>
+        <button onclick="loadCountries()">🔄 Actualitzar Països</button>
+    </div>
+</div>
+
+<div class="card">
+    <h2>📡 Prova l'API</h2>
+    <p>Prova aquests endpoints de l'API REST:</p>
+    <div style="margin: 10px 0;">
+        <button onclick="testEndpoint('/api/v1/countries')">GET /countries</button>
+        <button onclick="testEndpoint('/api/v1/conflicts')">GET /conflicts</button>
+        <button onclick="testEndpoint('/api/v1/conflicts?status=ACTIVE')">GET /conflicts?status=ACTIVE</button>
+    </div>
+    <pre id="apiResponse">La resposta de l'API apareixerà aquí...</pre>
+</div>
+
+<script>
+    // Carregar dades quan la pàgina s'obri
+    document.addEventListener('DOMContentLoaded', function() {
+        loadConflicts();
+        loadCountries();
+    });
+
+    // Carregar tots els conflictes
+    function loadConflicts() {
+        fetch('/api/v1/conflicts')
+            .then(response => response.json())
+            .then(data => displayConflicts(data))
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Carregar conflictes actius
+    function loadActiveConflicts() {
+        fetch('/api/v1/conflicts?status=ACTIVE')
+            .then(response => response.json())
+            .then(data => displayConflicts(data))
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Carregar tots els conflictes
+    function loadAllConflicts() {
+        fetch('/api/v1/conflicts')
+            .then(response => response.json())
+            .then(data => displayConflicts(data))
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Carregar països
+    function loadCountries() {
+        fetch('/api/v1/countries')
+            .then(response => response.json())
+            .then(data => displayCountries(data))
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Mostrar conflictes
+    function displayConflicts(conflicts) {
+        const container = document.getElementById('conflictsList');
+        if (conflicts.length === 0) {
+            container.innerHTML = '<p>No hi ha conflictes disponibles.</p>';
+            return;
+        }
+
+        container.innerHTML = conflicts.map(conflict => `
+                <div class="conflict-item ${conflict.status.toLowerCase()}">
+                    <h3>${conflict.name}</h3>
+                    <p><strong>Data d'inici:</strong> ${conflict.startDate}</p>
+                    <p><strong>Estat:</strong> <span class="status-badge status-${conflict.status.toLowerCase()}">${conflict.status}</span></p>
+                    <p><strong>Països involucrats:</strong> ${conflict.countries ? conflict.countries.map(c => c.name).join(', ') : 'Cap'}</p>
+                    ${conflict.description ? `<p><strong>Descripció:</strong> ${conflict.description}</p>` : ''}
+                </div>
+            `).join('');
+    }
+
+    // Mostrar països
+    function displayCountries(countries) {
+        const container = document.getElementById('countriesList');
+        if (countries.length === 0) {
+            container.innerHTML = '<p>No hi ha països disponibles.</p>';
+            return;
+        }
+
+        container.innerHTML = '<div style="display: flex; flex-wrap: wrap; gap: 10px;">' +
+            countries.map(country => `
+                    <div style="background: #ecf0f1; padding: 10px; border-radius: 4px; min-width: 100px;">
+                        <strong>${country.name}</strong><br>
+                        <small>${country.code}</small>
+                    </div>
+                `).join('') + '</div>';
+    }
+
+    // Provar endpoints de l'API
+    function testEndpoint(endpoint) {
+        fetch(endpoint)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('apiResponse').textContent =
+                    `Endpoint: ${endpoint}\n\n` + JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('apiResponse').textContent =
+                    `Error en l'endpoint ${endpoint}:\n${error}`;
+            });
+    }
+</script>
+</body>
+</html>
