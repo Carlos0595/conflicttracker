@@ -2,7 +2,6 @@ package com.example.conflicttracker.dto;
 
 import com.example.conflicttracker.model.ConflictStatus;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConflictResponseDTO {
@@ -10,45 +9,89 @@ public class ConflictResponseDTO {
     private Long id;
     private String name;
     private LocalDate startDate;
+    private LocalDate endDate;  // Afegit
     private ConflictStatus status;
     private String description;
-    private List<CountrySummaryDTO> countries = new ArrayList<>();
-    private List<FactionSummaryDTO> factions = new ArrayList<>();
-    private List<EventSummaryDTO> events = new ArrayList<>();
+    private String location;  // Afegit
+    private List<CountrySummaryDTO> countries;
 
     // Constructors
     public ConflictResponseDTO() {}
 
-    public ConflictResponseDTO(Long id, String name, LocalDate startDate, ConflictStatus status, String description) {
+    public ConflictResponseDTO(Long id, String name, LocalDate startDate,
+                               ConflictStatus status, String description,
+                               String location, List<CountrySummaryDTO> countries) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;
         this.status = status;
         this.description = description;
+        this.location = location;
+        this.countries = countries;
     }
 
     // Getters i Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public LocalDate getStartDate() { return startDate; }
-    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
+    public String getName() {
+        return name;
+    }
 
-    public ConflictStatus getStatus() { return status; }
-    public void setStatus(ConflictStatus status) { this.status = status; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public LocalDate getStartDate() {
+        return startDate;
+    }
 
-    public List<CountrySummaryDTO> getCountries() { return countries; }
-    public void setCountries(List<CountrySummaryDTO> countries) { this.countries = countries; }
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
 
-    public List<FactionSummaryDTO> getFactions() { return factions; }
-    public void setFactions(List<FactionSummaryDTO> factions) { this.factions = factions; }
+    public LocalDate getEndDate() {
+        return endDate;
+    }
 
-    public List<EventSummaryDTO> getEvents() { return events; }
-    public void setEvents(List<EventSummaryDTO> events) { this.events = events; }
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public ConflictStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ConflictStatus status) {
+        this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public List<CountrySummaryDTO> getCountries() {
+        return countries;
+    }
+
+    public void setCountries(List<CountrySummaryDTO> countries) {
+        this.countries = countries;
+    }
 }

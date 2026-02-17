@@ -1,75 +1,67 @@
 package com.example.conflicttracker.model;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-// Aquesta classe representa un conflicte bèl·lic a la base de dades
 @Entity
-@Table(name = "conflicts") // Això crea la taula "conflicts" a la BD
+@Table(name = "conflicts")
 public class Conflict {
 
-    // Identificador únic - clau primària
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Nom del conflicte - no pot estar buit
-    @NotBlank(message = "El nom del conflicte és obligatori")
+    @NotBlank(message = "El nom és obligatori")
     @Column(nullable = false)
     private String name;
 
-    // Data d'inici del conflicte - obligatòria
     @NotNull(message = "La data d'inici és obligatòria")
+    @PastOrPresent(message = "La data d'inici no pot ser futura")
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    // Estat del conflicte - utilitza el nostre enum
-    @Enumerated(EnumType.STRING) // Guarda el text (ACTIVE, FROZEN, ENDED)
+    @Column(name = "end_date")
+    private LocalDate endDate;  // Afegit
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ConflictStatus status;
 
-    // Descripció del conflicte - text llarg
-    @Lob // Per textos grans
-    @Column(columnDefinition = "TEXT") // Tipus TEXT a la base de dades
+    @NotBlank(message = "La descripció és obligatòria")
+    @Size(max = 500, message = "La descripció no pot superar els 500 caràcters")
+    @Column(length = 500)
     private String description;
 
-    // Relació MOLTS-A-MOLTS amb països
-    // Un conflicte pot estar en múltiples països
+    @NotBlank(message = "La ubicació és obligatòria")
+    private String location;  // Afegit
+
     @ManyToMany
     @JoinTable(
-            name = "conflict_countries", // Nom de la taula intermitja
-            joinColumns = @JoinColumn(name = "conflict_id"), // Clau forana d'aquesta taula
-            inverseJoinColumns = @JoinColumn(name = "country_id") // Clau forana de l'altra taula
+            name = "conflict_countries",
+            joinColumns = @JoinColumn(name = "conflict_id"),
+            inverseJoinColumns = @JoinColumn(name = "country_id")
     )
-    private Set<Country> countries = new HashSet<>();
+    private List<Country> countries = new ArrayList<>();
 
-    // Constructor buit - OBLIGATORI per JPA
+    // Constructors
     public Conflict() {}
 
-    // Constructor amb paràmetres - útil per crear conflictes ràpidament
-    public Conflict(String name, LocalDate startDate, ConflictStatus status, String description) {
+    public Conflict(String name, LocalDate startDate, ConflictStatus status,
+                    String description, String location) {
         this.name = name;
         this.startDate = startDate;
         this.status = status;
         this.description = description;
+        this.location = location;
     }
 
-    // MÈTODES PER AFEGIR I ELIMINAR PAÏSOS
-    public void addCountry(Country country) {
-        this.countries.add(country);
-        country.getConflicts().add(this); // Actualitza també l'altre costat de la relació
-    }
-
-    public void removeCountry(Country country) {
-        this.countries.remove(country);
-        country.getConflicts().remove(this);
-    }
-
-    // GETTERS I SETTERS - necessaris per accedir a les propietats
-
+    // Getters i Setters
     public Long getId() {
         return id;
     }
@@ -94,6 +86,14 @@ public class Conflict {
         this.startDate = startDate;
     }
 
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
     public ConflictStatus getStatus() {
         return status;
     }
@@ -110,11 +110,31 @@ public class Conflict {
         this.description = description;
     }
 
-    public Set<Country> getCountries() {
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public List<Country> getCountries() {
         return countries;
     }
 
-    public void setCountries(Set<Country> countries) {
+    public void setCountries(List<Country> countries) {
         this.countries = countries;
+    }
+
+    // Mètode helper per afegir país
+    public void addCountry(Country country) {
+        this.countries.add(country);
+        country.getConflicts().add(this);
+    }
+
+    // Mètode helper per eliminar país
+    public void removeCountry(Country country) {
+        this.countries.remove(country);
+        country.getConflicts().remove(this);
     }
 }

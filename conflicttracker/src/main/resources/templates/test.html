@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Thymeleaf</title>
+</head>
+<body>
+<h1 th:text="${message}">Missatge per defecte</h1>
+<p>Data: <span th:text="${timestamp}">2026-02-17</span></p>
+<p>Total conflictes: <span th:text="${totalConflicts}">0</span></p>
+
+<hr>
+<h3>Enllaços de prova:</h3>
+<ul>
+    <li><a href="/web/conflicts">Llistat de conflictes</a></li>
+    <li><a href="/web/conflicts/new">Crear nou conflicte</a></li>
+    <li><a href="/web/test">Aquesta pàgina</a></li>
+</ul>
+</body>
+</html>

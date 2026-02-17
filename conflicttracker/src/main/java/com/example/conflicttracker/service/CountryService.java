@@ -120,4 +120,11 @@ public class CountryService {
     public CountrySummaryDTO convertToSummaryDTO(Country country) {
         return new CountrySummaryDTO(country.getId(), country.getName(), country.getCode());
     }
+    public List<Country> findAll() {
+        return countryRepository.findAll();
+    }
+
+    public Optional<Country> findById(Long id) {
+        return countryRepository.findById(id);
+    }
 }

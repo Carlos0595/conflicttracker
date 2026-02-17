@@ -13,27 +13,22 @@ import java.util.List;
 @Repository
 public interface ConflictRepository extends JpaRepository<Conflict, Long> {
 
-    // Troba conflictes per estat (ACTIVE, FROZEN, ENDED)
     List<Conflict> findByStatus(ConflictStatus status);
 
-    // Troba conflictes que van començar després d'una data específica
-    List<Conflict> findByStartDateAfter(LocalDate date);
-
-    // Troba conflictes que van començar abans d'una data específica
-    List<Conflict> findByStartDateBefore(LocalDate date);
-
-    // Troba conflictes pel nom (ignorant majúscules/minúscules)
-    List<Conflict> findByNameContainingIgnoreCase(String name);
-
-    // Consulta personalizada: Troba conflictes actius que involucren un país específic
-    @Query("SELECT DISTINCT c FROM Conflict c JOIN c.countries country WHERE country.code = :countryCode")
+    @Query("SELECT c FROM Conflict c JOIN c.countries co WHERE co.code = :countryCode")
     List<Conflict> findConflictsByCountryCode(@Param("countryCode") String countryCode);
 
-    // Consulta personalizada: Compta quants conflictes hi ha per cada estat
-    @Query("SELECT c.status, COUNT(c) FROM Conflict c GROUP BY c.status")
-    List<Object[]> countConflictsByStatus();
+    long countByStatus(ConflictStatus status);
 
-    // Consulta personalizada: Troba conflictes amb més de X països involucrats
-    @Query("SELECT c FROM Conflict c WHERE SIZE(c.countries) > :minCountries")
-    List<Conflict> findConflictsWithMoreThanXCountries(@Param("minCountries") int minCountries);
+    List<Conflict> findByNameContainingIgnoreCase(String name);
+
+    List<Conflict> findByStartDateBetween(LocalDate start, LocalDate end);
+
+    List<Conflict> findByLocationContainingIgnoreCase(String location);
+
+    List<Conflict> findByStartDateAfter(LocalDate date);
+
+    List<Conflict> findByStartDateBefore(LocalDate date);
+
+    List<Conflict> findByStatusAndLocationContainingIgnoreCase(ConflictStatus status, String location);
 }
