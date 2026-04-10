@@ -1,11 +1,17 @@
-INSERT INTO countries (name, code) VALUES
-                                       ('Ucrania', 'UA'),
-                                       ('Israel', 'IL');
+-- Insertar países solo si no existen
+INSERT INTO countries (name, code)
+SELECT 'Ucrania', 'UA'
+    WHERE NOT EXISTS (SELECT 1 FROM countries WHERE code = 'UA');
 
-INSERT INTO conflicts (name, start_date, status) VALUES
-                                                     ('Conflicto Ucrania-Rusia', '2022-02-24', 'ACTIVE'),
-                                                     ('Conflicto Israel-Gaza', '2023-10-07', 'ACTIVE');
+INSERT INTO countries (name, code)
+SELECT 'Israel', 'IL'
+    WHERE NOT EXISTS (SELECT 1 FROM countries WHERE code = 'IL');
 
-INSERT INTO events (event_date, location, description, conflict_id) VALUES
-                                                                        ('2022-02-24', 'Kiev', 'Inicio del conflicto', 1),
-                                                                        ('2023-10-07', 'Gaza', 'Inicio del conflicto', 2);
+-- Insertar conflictos solo si no existen
+INSERT INTO conflicts (name, start_date, status, description, location)
+SELECT 'Conflicto Ucrania-Rusia', '2022-02-24', 'ACTIVE', 'Conflicto entre Ucrania y Rusia', 'Ucrania/Rusia'
+    WHERE NOT EXISTS (SELECT 1 FROM conflicts WHERE name = 'Conflicto Ucrania-Rusia');
+
+INSERT INTO conflicts (name, start_date, status, description, location)
+SELECT 'Conflicto Israel-Gaza', '2023-10-07', 'ACTIVE', 'Conflicto entre Israel y Gaza', 'Israel/Gaza'
+    WHERE NOT EXISTS (SELECT 1 FROM conflicts WHERE name = 'Conflicto Israel-Gaza');
