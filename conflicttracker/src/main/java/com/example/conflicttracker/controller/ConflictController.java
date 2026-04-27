@@ -14,7 +14,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/conflicts")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "${FRONTEND_URL:https://http://localhost:5173}"
+})
 public class ConflictController {
 
     @Autowired
@@ -27,9 +30,9 @@ public class ConflictController {
 
         List<ConflictResponseDTO> conflicts;
         if (status != null) {
-            conflicts = conflictService.findConflictsByStatus(status); // Filtra per estat
+            conflicts = conflictService.findConflictsByStatus(status);
         } else {
-            conflicts = conflictService.findAllConflicts(); // Tots els conflictes
+            conflicts = conflictService.findAllConflicts();
         }
         return ResponseEntity.ok(conflicts);
     }
@@ -64,8 +67,8 @@ public class ConflictController {
         return ResponseEntity.noContent().build();
     }
 
-    // ENDPOINT AVANÇAT: GET /api/v1/countries/{code}/conflicts - Conflictes d'un país
-    @GetMapping("/countries/{code}/conflicts")
+    // GET /api/v1/conflicts/countries/{code} - Conflictes d'un país
+    @GetMapping("/countries/{code}")
     public ResponseEntity<List<ConflictResponseDTO>> getConflictsByCountryCode(@PathVariable String code) {
         List<ConflictResponseDTO> conflicts = conflictService.findConflictsByCountryCode(code.toUpperCase());
         return ResponseEntity.ok(conflicts);
