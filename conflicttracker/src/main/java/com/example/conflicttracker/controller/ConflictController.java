@@ -14,10 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/conflicts")
-@CrossOrigin(origins = {
-        "http://localhost:5173",
-        "${FRONTEND_URL:https://http://localhost:5173}"
-})
 public class ConflictController {
 
     @Autowired

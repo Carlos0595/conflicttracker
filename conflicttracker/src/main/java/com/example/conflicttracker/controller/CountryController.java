@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/countries")
-@CrossOrigin(origins = "http://localhost:5173")  // ← ESTO ES NUEVO
 public class CountryController {
 
     @Autowired
